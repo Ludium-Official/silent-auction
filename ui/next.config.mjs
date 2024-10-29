@@ -7,6 +7,17 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  output: 'export',
+  basePath: '/silent-auction', // Add your repo name
+  assetPrefix: '/silent-auction/', // Add your repo name with trailing slash
+  trailingSlash: true, // This helps with GitHub Pages compatibility
+  images: {
+    unoptimized: true,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   webpack(config, { isServer }) {
     if (!isServer) {
@@ -14,28 +25,38 @@ const nextConfig = {
         ...config.resolve.alias,
         o1js: path.resolve(__dirname, 'node_modules/o1js/dist/web/index.js'),
       };
+      // Add fallbacks for node modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
     }
     config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
-  // To enable o1js for the web, we must set the COOP and COEP headers.
-  // See here for more information: https://docs.minaprotocol.com/zkapps/how-to-write-a-zkapp-ui#enabling-coop-and-coep-headers
+
+  // Headers configuration
   async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
-          },
-        ],
-      },
-    ];
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'Cross-Origin-Embedder-Policy',
+              value: 'require-corp',
+            },
+            {
+              key: 'Cross-Origin-Opener-Policy',
+              value: 'same-origin',
+            },
+          ],
+        },
+      ];
+    }
+    return [];
   },
 };
 

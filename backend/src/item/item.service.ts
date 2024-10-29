@@ -9,77 +9,63 @@ import { Item } from "./item.entity.js";
 
 @Injectable()
 export class ItemService {
-  private config: any;
-  private Network: any;
-  private feepayerKey: PrivateKey;
-  private zkAppKey: PrivateKey;
-  private fee: number;
-  private feepayerAddress: PublicKey;
-  private zkAppAddress: PublicKey;
-  private zkApp: BiddingContract;
 
   constructor(private readonly itemRepository: ItemRepository) {}
 
-  async onModuleInit() {
-    await this.initializeConfig();
-  }
-
-  private async initializeConfig() {
-    const configJson = JSON.parse(await fs.readFile('config.json', 'utf8'));
-    this.config = configJson.deployAliases['auctioncontract'];
-    
-    const feepayerKeysBase58 = JSON.parse(await fs.readFile(this.config.feepayerKeyPath, 'utf8'));
-    const zkAppKeysBase58 = JSON.parse(await fs.readFile("keys/auctioncontract.json", 'utf8'));
-
-    this.feepayerKey = PrivateKey.fromBase58(feepayerKeysBase58.privateKey);
-    this.zkAppKey = PrivateKey.fromBase58(zkAppKeysBase58.privateKey);
-
-    this.Network = Mina.Network({
-      networkId: this.config.networkId ?? 'testnet',
-      mina: "https://api.minascan.io/node/devnet/v1/graphql",
-      archive: 'https://api.minascan.io/archive/devnet/v1/graphql',
-    });
-
-    this.fee = Number(this.config.fee) * 1e9;
-    Mina.setActiveInstance(this.Network);
-
-    this.feepayerAddress = this.feepayerKey.toPublicKey();
-    this.zkAppAddress = this.zkAppKey.toPublicKey();
-    this.zkApp = new BiddingContract(this.zkAppAddress);
-
-    await BiddingProgram.compile();
-    await BiddingContract.compile();
-  }
-
-  async DeployMinaContract() {
+  async DeployMinaContract(): Promise<{ success: boolean; hash?: string; error?: string }> {
     try {
-      console.log("Deploying Item contract");
-      let tx = await Mina.transaction(
-        { sender: this.feepayerAddress, fee: this.fee },
-        async () => {
-          AccountUpdate.fundNewAccount(this.feepayerAddress, 1);
-          await this.zkApp.deploy();
-        }
-      );
-      await tx.prove();
-      let sentTx = await tx.sign([this.feepayerKey, this.zkAppKey]).send();
-      if (sentTx.status === 'pending') {
-        console.log("Transaction hash:", sentTx.hash);
-        return { success: true, hash: sentTx.hash };
-      } else {
-        return { success: false, error: "Transaction failed" };
-      }
-    } catch (err: unknown) {
-      console.error("Deployment error:", err);
-      if (err instanceof Error) {
-        return { success: false, error: err.message };
-      } else {
-        return { success: false, error: "An unknown error occurred" };
-      }
-    }
-  }
+        const Network = Mina.Network({
+            mina: "https://api.minascan.io/node/devnet/v1/graphql",
+            archive: 'https://api.minascan.io/archive/devnet/v1/graphql',
+        });
+        Mina.setActiveInstance(Network);
+        console.log("Network setup complete");
 
-  async AddItem(createItemDto: CreateItemDto) {
+        const feepayerKey = PrivateKey.fromBase58('EKEvxehxoKztsx3wZeKuEjWgcsarwobkHb7NYSEZ8eq2xVy94k7h');
+        const feepayerAddress = feepayerKey.toPublicKey();
+        console.log(feepayerAddress)
+        console.log("Feepayer setup complete");
+
+        const zkAppPrivateKey = PrivateKey.random();
+        const zkAppAddress = zkAppPrivateKey.toPublicKey();
+        console.log("ZkApp keys generated");
+
+        const zkApp = new BiddingContract(zkAppAddress);
+
+        console.time('compile');
+        await BiddingProgram.compile();
+        await BiddingContract.compile();
+        console.timeEnd('compile');
+
+        console.time('deploy');
+        let tx = await Mina.transaction(
+            { sender: feepayerAddress, fee: 0.1 * 1e9 },
+            async () => {
+                AccountUpdate.fundNewAccount(feepayerAddress, 1);
+                await zkApp.deploy();
+            }
+        );
+
+        await tx.prove();
+        const txResult = await tx.sign([feepayerKey, zkAppPrivateKey]).send();
+        console.timeEnd('deploy');
+
+        if (txResult.hash) {
+            console.log("Deployment successful. Hash:", txResult.hash);
+            return { success: true, hash: txResult.hash };
+        } else {
+            return { success: false, error: "Transaction failed - no hash returned" };
+        }
+
+    } catch (error) {
+        console.error("Deployment error:", error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "An unknown error occurred"
+        };
+    }
+}
+  async AddItem(createItemDto: CreateItemDto, txhash:string| undefined) {
     try {
       const map = new MerkleMap();
       console.log("adding item..");
@@ -90,6 +76,7 @@ export class ItemService {
         minimumPrice: createItemDto.minimumPrice,
         endTime: createItemDto.endTime,
         type: createItemDto.type,
+        deploymentHash: txhash,
         merkleMap: "none",
         merkleMapRoot: map.getRoot().toString(),
       });

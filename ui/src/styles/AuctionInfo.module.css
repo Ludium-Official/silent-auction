@@ -5,8 +5,6 @@
     flex-direction: column;
   }
   
-
-  
   .logo {
     color: white;
     font-size: 1.5rem;
@@ -40,7 +38,7 @@
   
   .twoColumnLayout {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1.5fr 1fr; /* Changed from 2fr 1fr */
     gap: 2rem;
     align-items: start;
   }
@@ -62,7 +60,16 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .infoCard,
+  .nftDetailsSection {
     padding: 2rem;
+  }
+  
+  .bidVerification {
+    padding: 2.5rem;
+    min-width: 320px;
   }
   
   .title {
@@ -110,17 +117,19 @@
   }
   
   .copyButton {
-    padding: 0.25rem 0.75rem;
-    background-color: #f0f0f0;
-    border: none;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    color: #666;
+    background-color: #fff;
+    border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.875rem;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
   }
   
   .copyButton:hover {
-    background-color: #e0e0e0;
+    background-color: #f0f0f0;
+    border-color: #ccc;
   }
   
   .descriptionRow {
@@ -136,12 +145,6 @@
   .descriptionRow p {
     line-height: 1.6;
     color: #444;
-  }
-  
-  .bidVerification {
-    background: white;
-    border-radius: 8px;
-    padding: 2rem;
   }
   
   .bidKeyForm {
@@ -194,15 +197,70 @@
   }
   
   .personalBidInfo {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
     background-color: #f8f9fa;
-    border-radius: 4px;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    width: 100%;
   }
   
   .personalBidInfo h4 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
     color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+  
+  .bidInfoGrid {
+    display: grid;
+    gap: 1.2rem;
+  }
+  
+  .bidInfoItem {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: center;
+    padding: 0.75rem 0;
+  }
+  
+  .bidInfoItem label {
+    font-weight: 600;
+    color: #666;
+  }
+  
+  .bidInfoItem span {
+    color: #333;
+  }
+  
+  .transactionLink {
+    color: #0066cc;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  
+  .transactionLink:hover {
+    color: #0052a3;
+    text-decoration: underline;
+  }
+  
+  .merkleContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .winner {
+    color: #2e7d32;
+    font-weight: 600;
+  }
+  
+  .notWinner {
+    color: #666;
+    font-weight: 500;
   }
   
   .bidStatus {
@@ -210,16 +268,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .winner {
-    color: #28a745;
-    font-weight: bold;
-  }
-  
-  .notWinner {
-    color: #dc3545;
-    font-weight: bold;
   }
   
   .winnerInfo {
@@ -240,25 +288,31 @@
   }
   
   .footer {
-    background-color: #f8f9fa;
-    padding: 1rem;
+    background: #ff69b4;
+    padding: 1.5rem;
     text-align: center;
-    border-top: 1px solid #dee2e6;
+    color: white;
+    font-size: 0.9rem;
     margin-top: auto;
   }
   
   /* Responsive Design */
   @media (max-width: 1024px) {
     .mainContent {
-      padding: 1rem;
+      padding: 1.5rem;
     }
     
     .twoColumnLayout {
-      gap: 1rem;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
     }
   }
   
   @media (max-width: 768px) {
+    .mainContent {
+      padding: 1rem;
+    }
+  
     .twoColumnLayout {
       grid-template-columns: 1fr;
     }
@@ -270,8 +324,20 @@
     .nav {
       gap: 1rem;
     }
+  
+    .bidVerification {
+      padding: 2rem;
+      min-width: 100%;
+    }
     
-
+    .bidInfoItem {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    
+    .bidInfoItem label {
+      margin-bottom: 0.25rem;
+    }
   }
   
   @media (max-width: 480px) {
@@ -296,5 +362,49 @@
       width: 100%;
       margin-top: 0.5rem;
     }
+  }
+  
+
+  /* In your AuctionInfo.module.css */
+.nftDetailsSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Adds space between the heading and content */
+    padding: 2rem;
+  }
+  
+  .nftContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Adds space between image and text content */
+  }
+  
+  .nftImageContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+    margin-bottom: 2rem; /* Adds specific space after the image */
+  }
+  
+  .nftImage {
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Add spacing for text elements */
+  .nftDetailsText {
+    margin-top: 1.5rem;
+  }
+  
+  /* If you have specific text elements, you can add spacing to them */
+  .nftDetailsText h4 {
+    margin-bottom: 1rem;
+  }
+  
+  .nftDetailsText p {
+    margin-bottom: 0.75rem;
   }
   

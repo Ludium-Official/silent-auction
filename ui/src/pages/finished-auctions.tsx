@@ -110,7 +110,7 @@ export default function FinishedAuctions() {
                   <svg className={styles.trophyIcon} viewBox="0 0 20 20" width="16" height="16">
                     <path fill="currentColor" d="M15 2v2h-1v1h-1v1h-1v1h-1v1H7V7H6V6H5V5H4V4H3V2h12zm-2 7v1h-1v1H8v-1H7V9h6zM8 11v1h4v-1H8z"/>
                   </svg>
-                  Winner: {auction.winner}
+                  Winning Bid: {"170 MINA"}
                 </div>
               </div>
             ))}

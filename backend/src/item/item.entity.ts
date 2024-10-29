@@ -10,12 +10,6 @@ export class Item {
   @Column({ length: 100 })
   name: string;
 
-  @Column()
-  merkleMap: String;
-
-  @Column()
-  merkleMapRoot: string;
-
   @Column({ nullable: true })
   zkappAddress: string;
 
@@ -27,6 +21,9 @@ export class Item {
 
   @Column()
   minimumPrice: number;
+
+  @Column()
+  deploymentHash: string;
 
   @Column()
   endTime: Date;

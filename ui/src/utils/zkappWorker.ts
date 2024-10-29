@@ -89,7 +89,7 @@ const states = {
 
 // ---------------------------------------------------------------------------------------
 
-const functions = {
+export const functions = {
 
 
   setActiveInstanceToDevnet: async (args: {}) => {
@@ -229,8 +229,9 @@ export type ZkappWorkerReponse = {
   data: any;
 };
 
-if (typeof window !== 'undefined') {
-  addEventListener(
+if (typeof self !== 'undefined' && typeof window === 'undefined') {
+  // We're in a worker environment
+  self.addEventListener(
     'message',
     async (event: MessageEvent<ZkappWorkerRequest>) => {
       const returnData = await functions[event.data.fn](event.data.args);
@@ -239,7 +240,8 @@ if (typeof window !== 'undefined') {
         id: event.data.id,
         data: returnData,
       };
-      postMessage(message);
+      self.postMessage(message);
     }
   );
+
 }

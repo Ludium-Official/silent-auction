@@ -39,17 +39,40 @@ export class ItemsController {
 
   @Post('/create')
   async createItem(@Body() createItemDto: CreateItemDto) {
-    console.log("create")
     try {
-      const newItem = await this.itemService.AddItem(createItemDto);
+      console.log("Starting item creation process...");
+      
+      // Step 1: Deploy Mina Contract
+      const result = await this.itemService.DeployMinaContract();
+      if (!result.success) {
+        throw new Error(`Contract deployment failed: ${result.error}`);
+      }
+
+      const txhash = result.hash;
+      console.log("transaction Hash :" +txhash)
+
+      // Step 2: Add Item to Database
+      const newItem = await this.itemService.AddItem(createItemDto, txhash);
+      
       return {
-        message: 'Item created successfully',
-        item: newItem,
+        success: true,
+        message: "Item created successfully",
+        data: newItem,
+        transactionHash: txhash
       };
+
     } catch (error) {
-      throw new Error(`Failed to create item: ${(error as Error).message}`);
+      console.error("Error in createItem:", error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error instanceof Error ? error.message : 'An unexpected error occurred',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
+
   
 
   @Get('/running')
