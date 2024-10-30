@@ -1,15 +1,14 @@
-/* CreateAuction.module.css */
 .container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #FFF0F5; /* Light pink background */
+  background-color: #FFF0F5;
 }
 
 /* Header styles */
 .header {
   width: 100%;
-  height: 80px; /* Taller header */
+  height: 80px;
   background-color: #FF69B4;
   padding: 0 2rem;
   display: flex;
@@ -39,22 +38,102 @@
 .main {
   flex: 1;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 2rem;
 }
 
 .title {
-  color: #333;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 2.5rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
+  margin: 2rem 0 3rem;
+  color: #ff69b4;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: #ff69b4;
+  border-radius: 2px;
+}
+
+/* Form styles */
+.formContainer, .nftSendContainer {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #E5E7EB;
 }
 
 .formGroup {
   margin-bottom: 1.5rem;
 }
+
+/* Button styles */
+.button {
+  width: 100%;
+  height: 48px;
+  background-color: #FF69B4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.button:hover {
+  background-color: #FF1493;
+}
+
+.button:disabled {
+  background-color: #FFB6C1;
+  cursor: not-allowed;
+}
+
+/* Auction type name styles */
+.auctionTypeName {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auctionTypeInput:checked + .auctionTypeLabel .auctionTypeName {
+  color: #FF69B4;
+}
+
+/* Form container specific styles */
+.formContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Select dropdown specific styles */
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Fix spacing between form elements */
+.formGroup + .formGroup {
+  margin-top: 1.5rem;
+}
+
 
 .label {
   display: block;
@@ -63,7 +142,6 @@
   font-weight: 500;
 }
 
-/* Input styles with visible borders */
 .input {
   width: 100%;
   height: 48px;
@@ -72,14 +150,16 @@
   border-radius: 8px;
   background-color: white;
   font-size: 1rem;
+  transition: all 0.2s;
 }
 
 .input:focus {
   outline: none;
   border-color: #FF69B4;
+  box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.1);
 }
 
-/* Input with MINA unit */
+/* Input with unit */
 .inputWithUnit {
   position: relative;
 }
@@ -116,7 +196,6 @@
   cursor: pointer;
 }
 
-/* Auction type cards with visible borders */
 .auctionTypeLabel {
   display: flex;
   flex-direction: column;
@@ -132,8 +211,8 @@
 }
 
 .auctionTypeInput:checked + .auctionTypeLabel {
-  border-color: #2563EB;
-  background-color: #EBF5FF;
+  border-color: #FF69B4;
+  background-color: rgba(255, 105, 180, 0.1);
 }
 
 .auctionTypeIcon {
@@ -143,133 +222,18 @@
 }
 
 .auctionTypeInput:checked + .auctionTypeLabel .auctionTypeIcon {
-  color: #2563EB;
+  color: #FF69B4;
 }
 
-.auctionTypeName {
-  font-weight: 500;
-  color: #333;
-}
-
-/* Create button */
-.button {
-  width: 100%;
-  height: 48px;
-  background-color: #ff69b4;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.button:hover {
-  background-color: #1D4ED8;
-}
-
-.button:disabled {
-  background-color: #9CA3AF;
-  cursor: not-allowed;
-}
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 1.5rem;
-  color: #666;
-  font-size: 0.875rem;
-}
-
-/* Select dropdown styles */
-select.input {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
-  padding-right: 2.5rem;
-}
-
-.input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #E5E7EB; /* Light gray border */
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  background-color: white;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #FF69B4;
-  box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.1);
-}
-
-/* Add borders to auction type cards */
-.auctionTypeLabel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  border: 2px solid #E5E7EB;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  background-color: white;
-}
-
-.auctionTypeInput:checked + .auctionTypeLabel {
-  border-color: #FF69B4;
-  background-color: rgba(255, 105, 180, 0.1);
-}
-
-/* Style the select dropdown */
-select.input {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1em;
-}
-
-/* Add container shadow and border */
-.formContainer {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
-}
-
-/* Style the input with unit */
-.inputWithUnit {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.inputWithUnit input {
-  padding-right: 4rem; /* Make space for the MINA text */
-}
-
-.unitLabel {
-  position: absolute;
-  right: 1rem;
-  color: #6B7280;
-  pointer-events: none;
-}
-
+/* NFT Send Container */
 .nftSendContainer {
   background-color: white;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  max-width: 600px;
+  width: 100%;
 }
 
 .nftInstructions {
@@ -285,7 +249,7 @@ select.input {
 
 .nftInstructions p {
   color: #666;
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 1rem;
 }
@@ -298,7 +262,7 @@ select.input {
 
 .nftInstructions li {
   color: #666;
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
   padding-left: 1.5rem;
@@ -309,123 +273,144 @@ select.input {
   content: "•";
   position: absolute;
   left: 0.5rem;
-  color: #666;
+  color: #FF69B4;
 }
 
+/* NFT Input Section - Improved layout */
+.nftInputs {
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Input with button layout fix */
+.inputWithButton {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.input {
+  flex: 1;
+  height: 42px;
+  padding: 0 1rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkButton {
+  padding: 0 1.5rem;
+  background-color: #FF69B4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* NFT Information Box - Fixed layout */
+.nftInfoBox {
+  background-color: #FFF5F8;
+  border: 1px solid #FFB6C1;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.nftDetails {
+  width: 100%;
+}
+
+.nftDetails h4 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.nftDetails p {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  word-break: break-all;
+}
+
+/* Verification Badge */
+.verificationBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 105, 180, 0.1);
+  border-radius: 16px;
+  color: #FF69B4;
+  font-size: 0.9rem;
+}
+
+/* Status Message */
+.statusMessage {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.statusMessage.success {
+  background-color: #E8FFF3;
+  color: #059669;
+}
+
+/* Send Button */
 .sendButton {
+  width: 100%;
+  height: 42px;
+  background-color: #FF69B4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 100%;
-  height: 48px;
-  background-color: #ff69b4;;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  margin-top: 1.5rem;
 }
 
 .sendButton:hover {
-  background-color: #ff69b4;
+  background-color: #FF1493;
 }
 
 .sendButton:disabled {
-  background-color: #9CA3AF;
+  background-color: #FFB6C1;
   cursor: not-allowed;
 }
 
-.sendIcon {
-  margin-left: 0.5rem;
-}
-
-/* Update the main container styles */
-.main {
-  flex: 1;
-  width: 100%;
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 0 2rem;
-}
-.title {
-  font-size: 2.5rem;
-  font-weight: 700;
+/* Footer */
+.footer {
   text-align: center;
-  margin: 2rem 0 3rem;
-  color: #ff69b4;
-  position: relative;
-}
-
-.title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background: #ff69b4;
-  border-radius: 2px;
-}
-
-/* Update form container styles */
-.formContainer {
+  padding: 1.5rem;
+  color: #666;
+  font-size: 0.875rem;
   background-color: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Add styles for loading state */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.loadingIcon {
-  animation: spin 1s linear infinite;
-  margin-right: 0.5rem;
-}
-
-/* Update button styles */
-.button,
-.sendButton {
-  position: relative;
-  overflow: hidden;
-}
-
-.button:disabled,
-.sendButton:disabled {
-  background-color: #9CA3AF;
-  cursor: not-allowed;
-}
-
-.button:disabled::after,
-.sendButton:disabled::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 200%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(100%);
-  }
+  border-top: 1px solid #E5E7EB;
 }

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
-import ZkappWorkerClient from '../utils/zkappWorkerClient';
+import ZkappWorkerClient from './zkappWorkerClient';
 import { PublicKey, Field } from 'o1js';
 import Header from '../components/Header';
 

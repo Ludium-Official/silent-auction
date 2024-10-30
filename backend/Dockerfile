@@ -22,7 +22,6 @@ COPY --from=build /usr/src/app/dist ./dist
 
 # 키 파일들을 Docker 컨테이너의 캐시 디렉토리로 복사
 COPY package*.json ./
-COPY .env ./
 
 RUN npm install --only=production
 RUN rm package*.json

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ItemsModule } from './item/item.module';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,6 +26,6 @@ import { AuctionWinner } from './auction-winner/auction-winner.entity';
     synchronize: true,
   }), ScheduleModule.forRoot(), ItemsModule, AuctionLogsModule, MerkleMapModule, AuctionWinnerModule, ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

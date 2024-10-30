@@ -12,7 +12,7 @@ export class ItemService {
 
   constructor(private readonly itemRepository: ItemRepository) {}
 
-  async DeployMinaContract(): Promise<{ success: boolean; hash?: string; error?: string }> {
+  async DeployMinaContract(): Promise<{ success: boolean; hash?: string; zkappAddress? :PublicKey ;error?: string }> {
     try {
         const Network = Mina.Network({
             mina: "https://api.minascan.io/node/devnet/v1/graphql",
@@ -52,7 +52,7 @@ export class ItemService {
 
         if (txResult.hash) {
             console.log("Deployment successful. Hash:", txResult.hash);
-            return { success: true, hash: txResult.hash };
+            return { success: true, hash: txResult.hash , zkappAddress : zkAppAddress };
         } else {
             return { success: false, error: "Transaction failed - no hash returned" };
         }
@@ -65,7 +65,7 @@ export class ItemService {
         };
     }
 }
-  async AddItem(createItemDto: CreateItemDto, txhash:string| undefined) {
+  async AddItem(createItemDto: CreateItemDto, txhash:string| undefined, zkappAddress: PublicKey|undefined ) {
     try {
       const map = new MerkleMap();
       console.log("adding item..");
@@ -77,6 +77,7 @@ export class ItemService {
         endTime: createItemDto.endTime,
         type: createItemDto.type,
         deploymentHash: txhash,
+        zkappAddress: zkappAddress?.toBase58(),
         merkleMap: "none",
         merkleMapRoot: map.getRoot().toString(),
       });

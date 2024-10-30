@@ -49,16 +49,18 @@ export class ItemsController {
       }
 
       const txhash = result.hash;
+      const zkappAddress = result.zkappAddress; 
       console.log("transaction Hash :" +txhash)
 
       // Step 2: Add Item to Database
-      const newItem = await this.itemService.AddItem(createItemDto, txhash);
+      const newItem = await this.itemService.AddItem(createItemDto, txhash, zkappAddress );
       
       return {
         success: true,
         message: "Item created successfully",
         data: newItem,
-        transactionHash: txhash
+        transactionHash: txhash,
+        zkappAddress: result.zkappAddress
       };
 
     } catch (error) {
