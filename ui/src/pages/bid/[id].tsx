@@ -6,7 +6,6 @@ import { Field, MerkleMap, MerkleTree, PublicKey } from 'o1js';
 import Header from '@/components/Header';
 
 
-const ZKAPP_ADDRESS = 'B62qjYDFfZWN7xXH7EP3jUX4JMqFQ3ntynFLwUKUTCKE6hXxC2xSDfR';
 
 interface Auction {
   id: number;

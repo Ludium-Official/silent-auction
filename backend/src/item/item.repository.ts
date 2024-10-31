@@ -8,7 +8,12 @@ export class ItemRepository extends Repository<Item>{
         super(Item, dataSource.createEntityManager());
     }
     async findById(id: number): Promise<Item | null> {
-        return this.findOne({ where: { id } });
+        return this.findOne({
+            where: { id },
+            relations: {
+                auctionWinner: true  
+            }
+        });
     }
     
 

@@ -1,4 +1,6 @@
 
+const NEXT_PUBLIC_APP_CHAIN_ID = process.env.NEXT_PUBLIC_APP_CHAIN_ID;
+
 export function explorerAccount() {
   const chain = chainId();
   if (chain === "devnet") return "https://minascan.io/devnet/account/";
@@ -13,7 +15,7 @@ export function explorerTransaction() {
 }
 
 export function chainId() {
-  NEXT_PUBLIC_APP_CHAIN_ID = 'devnet'
+
   console.log(NEXT_PUBLIC_APP_CHAIN_ID)
   if (NEXT_PUBLIC_APP_CHAIN_ID === undefined)
     console.error("NEXT_PUBLIC_APP_CHAIN_ID is undefined");

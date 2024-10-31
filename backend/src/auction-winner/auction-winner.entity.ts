@@ -7,6 +7,9 @@ export class AuctionWinner {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  winningKey: number;
+
   @Column('decimal', { precision: 10, scale: 2 })
   winningBid: number;
 

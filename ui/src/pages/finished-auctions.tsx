@@ -5,12 +5,16 @@ import Header from '@/components/Header';
 
 interface FinishedAuction {
   id: number;
-  title: string;
   name: string;
   description: string;
   minimumPrice: number;
   endTime: string;
-  winner: string;
+  auctionWinner?: {
+    id: number;
+    winningBid: number;
+    winner: string;
+    // add other winner properties you need
+  };
 }
 
 export default function FinishedAuctions() {
@@ -32,14 +36,19 @@ export default function FinishedAuctions() {
       if (!response.ok) {
         throw new Error('Failed to fetch auctions');
       }
-      const data = await response.json();
+      const data: FinishedAuction[] = await response.json();
       setAuctions(data);
       setLoading(false);
+      
     } catch (err) {
       setError('Error fetching auctions. Please try again later.');
       setLoading(false);
     }
+
+    
   };
+
+  
 
   const handleAuctionClick = (id: number) => {
     router.push(`/auction-info/${id}`);
@@ -85,7 +94,6 @@ export default function FinishedAuctions() {
                 className={styles.auctionBox}
                 onClick={() => handleAuctionClick(auction.id)}
               >
-                <h3 className={styles.auctionTitle}>{auction.title}</h3>
                 
                 <div className={styles.auctionInfo}>
                   <strong>Name:</strong> {auction.name}
@@ -110,8 +118,7 @@ export default function FinishedAuctions() {
                   <svg className={styles.trophyIcon} viewBox="0 0 20 20" width="16" height="16">
                     <path fill="currentColor" d="M15 2v2h-1v1h-1v1h-1v1h-1v1H7V7H6V6H5V5H4V4H3V2h12zm-2 7v1h-1v1H8v-1H7V9h6zM8 11v1h4v-1H8z"/>
                   </svg>
-                  Winning Bid: {"170 MINA"}
-                </div>
+                  Winning Bid: {auction.auctionWinner ? auction.auctionWinner.winningBid : 'No bids'}                </div>
               </div>
             ))}
           </div>

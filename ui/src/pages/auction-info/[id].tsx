@@ -6,41 +6,23 @@ import styles from '@/styles/AuctionInfo.module.css';
 import Header from '@/components/Header';
 
 interface AuctionInfo {
-  winnerAddress: string;
-  winningBid: number;
-  itemName: string;
-  endTime: string;
-  nftImage: string;
-  contractAddress: string;
-  id: string;
+  id: number;
+  name: string;
   description: string;
-  creator: string;
+  minimumPrice: number;
+  endTime: string;
+  zkappAddress: string;
+  deploymentHash: string;
+  type: string;
+  createdAt: string;
+  auctionWinner: {
+    id: number;
+    winningBid: string;
+    winningKey: string;
+    winTime: string;
+    winnerAddress: string;
+  } | null;
 }
-
-const DUMMY_AUCTION_DATA: { [key: string]: AuctionInfo } = {
-  "1": {
-    winnerAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    winningBid: 50,
-    itemName: "Rare Digital Art #1",
-    endTime: "2024-10-25T15:30:00Z",
-    nftImage: "https://picsum.photos/400/400", // Using a real test image
-    contractAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-    id: "1234",
-    description: "A unique piece of digital art representing the future of creativity in the digital age.",
-    creator: "0xArtist123..."
-  },
-  "3": {
-    winnerAddress: "B62qkUQoebsMDhaC6vn1PiherKgNeMW4p1hxWKhFw7xkNZwjy4zhDRJ",
-    winningBid: 170,
-    itemName: "Pudgy Penguin",
-    endTime: "2024-10-26T15:30:00Z",
-    nftImage: "/assets/pudgy-penguin.png",
-    contractAddress: "0x123456789...",
-    id: "5678",
-    description: "Another amazing piece of digital art.",
-    creator: "0xArtist456..."
-  }
-};
 
 const AuctionInfo = () => {
   const router = useRouter();
@@ -48,19 +30,32 @@ const AuctionInfo = () => {
   const [auctionInfo, setAuctionInfo] = useState<AuctionInfo | null>(null);
   const [bidKey, setBidKey] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isloading, setLoading] = useState(false);
   const [personalBidInfo, setPersonalBidInfo] = useState<any>(null);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
+    fetchAuctionDetails();
+  }, [id]);
+
+  const fetchAuctionDetails = async () => {
     if (id) {
-      const data = DUMMY_AUCTION_DATA[id as string];
-      console.log("Found data:", data); // Debug log
-      if (data) {
+      try {
+        const response = await fetch(`${backendUrl}/items/${id}`);
+        console.log(response)
+        if (!response.ok) {
+          throw new Error('Failed to fetch auction details');
+        }
+        const data = await response.json();
         setAuctionInfo(data);
+        console.log(data)
+      } catch (error) {
+        console.error('Error fetching auction details:', error);
+        setError('Failed to load auction details');
       }
     }
-  }, [id]);
-  
+  };
+
 
   const handleVerifyBid = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,38 +63,51 @@ const AuctionInfo = () => {
     setLoading(true);
 
     try {
-      // Simulate API verification
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Dummy verification logic
-      if (bidKey === "12345") {
-        setPersonalBidInfo({
-          bidAmount: 120,
-          timestamp: "2024-10-25T14:30:00Z",
-          isWinner: false,
-          bidtxid: "https://minascan.io/devnet/account/B62qjYDFfZWN7xXH7EP3jUX4JMqFQ3ntynFLwUKUTCKE6hXxC2xSDfR/txs",
-          merkleroot: "15808653983891655572297620380441094149970272485610379904537881633613561093685n"
-        });
-      } else if (bidKey == "56789") {
-        setPersonalBidInfo({
-          bidAmount: 170,
-          timestamp: "2024-10-28T14:30:00Z",
-          isWinner: true,
-          bidtxid: "https://minascan.io/devnet/account/B62qjYDFfZWN7xXH7EP3jUX4JMqFQ3ntynFLwUKUTCKE6hXxC2xSDfR/txs",
-          merkleroot: "19988526156529649009362165196142195992555127306190212867869130421781688803633n"
-        });
-
+      const itemId = router.query.id;
+      if (!itemId || !bidKey) {
+        setError('Missing item ID or bid key');
+        return;
       }
-      else 
-      {
-        setError('Invalid bid key. Please check and try again.');
+
+      // Make API call to backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auction-log/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          itemId: Number(itemId),
+          key: Number(bidKey)
+        }),
+      });
+
+      console.log(response)
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to verify bid');
+      }
+
+      const bidData = await response.json();
+
+      if (bidData) {
+        setPersonalBidInfo({
+          bidAmount: bidData.bidAmount,
+          timestamp: bidData.bidTime,
+          bidtxid: bidData.transactionHash,
+          merkleroot: bidData.merkleRoot || ''
+        });
+      } else {
+        setError('No bid found with the provided key.');
       }
     } catch (err) {
-      setError('An error occurred while verifying your bid.');
+      console.error('Bid verification error:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred while verifying your bid.');
     } finally {
       setLoading(false);
     }
   };
+
 
   const truncateString = (str: string, startLength: number = 6, endLength: number = 4) => {
     if (str.length <= startLength + endLength) return str;
@@ -122,15 +130,14 @@ const AuctionInfo = () => {
           <div className={styles.leftColumn}>
             <div className={styles.infoCard}>
               <h3>Auction Information</h3>
-              <p>Item: {auctionInfo.itemName}</p>
+              <p>Item: {auctionInfo.name}</p>
               <p>End Time: {new Date(auctionInfo.endTime).toLocaleString()}</p>
-              <p>Winning Key: {56789} </p>
-
-              <p>Winning Bid: {auctionInfo.winningBid} MINA</p>
+              <p>Winning Key: {auctionInfo.auctionWinner?.winningKey} </p>
+              <p>Winning Bid: {auctionInfo.auctionWinner?.winningBid} MINA</p>
               
               <div className={styles.winnerInfo}>
                 <h4>Winner Information</h4>
-                <p>Winner Address: {auctionInfo.winnerAddress}</p>
+                <p>Winner Address: {auctionInfo.auctionWinner?.winnerAddress}</p>
               </div>
             </div>
 
@@ -139,34 +146,31 @@ const AuctionInfo = () => {
               <h3>NFT Details</h3>
               <div className={styles.nftContent}>
                 <div className={styles.nftImageContainer}>
-                  <Image 
+                  {/* <Image 
                     src={auctionInfo.nftImage}
                     alt={auctionInfo.itemName}
                     width={400}
                     height={400}
                     className={styles.nftImage}
                     priority
-                  />
+                  /> */}
                 </div>
                 <div className={styles.nftInfo}>
                   <div className={styles.infoRow}>
                     <strong>Contract Address:</strong>
-                    <span>{auctionInfo.contractAddress}</span>
+                    <span>{auctionInfo.zkappAddress}</span>
                     <button 
                       className={styles.copyButton}
-                      onClick={() => navigator.clipboard.writeText(auctionInfo.contractAddress)}
+                      onClick={() => navigator.clipboard.writeText(auctionInfo.zkappAddress)}
                     >
                       Copy
                     </button>
                   </div>
                   <div className={styles.infoRow}>
-                    <strong>Token ID:</strong>
+                    <strong>Auction ID:</strong>
                     <span>{auctionInfo.id}</span>
                   </div>
-                  <div className={styles.infoRow}>
-                    <strong>Creator:</strong>
-                    <span>{auctionInfo.creator}</span>
-                  </div>
+
                   <div className={styles.descriptionRow}>
                     <strong>Description:</strong>
                     <p>{auctionInfo.description}</p>
@@ -189,14 +193,14 @@ const AuctionInfo = () => {
                   onChange={(e) => setBidKey(e.target.value)}
                   placeholder="Enter your bid key"
                   className={styles.bidKeyInput}
-                  disabled={loading}
+                  disabled={isloading}
                 />
                 <button 
                   type="submit" 
                   className={styles.verifyButton}
-                  disabled={loading || !bidKey}
+                  disabled={isloading || !bidKey}
                 >
-                  {loading ? 'Verifying...' : 'Verify'}
+                  {isloading ? 'Verifying...' : 'Verify'}
                 </button>
               </form>
 

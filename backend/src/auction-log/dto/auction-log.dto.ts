@@ -11,3 +11,10 @@ export class AuctionLogDto {
 
     transactionHash: string;
 }
+
+
+export class AuctionLogverifyDto{
+    itemId: number; 
+
+    key: number;
+}

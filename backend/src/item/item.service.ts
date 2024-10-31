@@ -106,7 +106,6 @@ export class ItemService {
     }
   }
 
-
   async getRunningAuctions() {
     const currentTime = new Date();
     return this.itemRepository.find({
@@ -118,15 +117,15 @@ export class ItemService {
       }
     });
   }
-
   async getFinishedAuctions() {
-    const currentTime = new Date();
-    return this.itemRepository.find({
+    const currentDate = new Date();
+    return await this.itemRepository.find({
       where: {
-        endTime: LessThan(currentTime)
+        endTime: LessThan(currentDate)
       },
+      relations: ['auctionWinner'], // Include the winner relation
       order: {
-        endTime: 'ASC'
+        endTime: 'DESC'
       }
     });
   }

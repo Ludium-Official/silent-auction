@@ -327,6 +327,7 @@ export async function waitForTransaction(jobId) {
 }
 
 async function zkCloudWorkerRequest(params) {
+  console.log("zkcloudworkerRequest")
   const { command, task, transactions, args, metadata, mode, jobId } = params;
   const chain = chainId();
   const apiData = {

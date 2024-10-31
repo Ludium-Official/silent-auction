@@ -1,7 +1,7 @@
 import { Controller, Get, Post, HttpException, HttpStatus, Body, ValidationPipe, Param } from '@nestjs/common';
 import { AuctionLogRepository } from './auction-log.repostiory';
 import { ItemRepository } from '../item/item.repository';
-import { AuctionLogDto } from './dto/auction-log.dto';
+import { AuctionLogDto, AuctionLogverifyDto } from './dto/auction-log.dto';
 import { AuctionLog } from './auction-log.entity';
 import { AuctionLogService } from './auction-log.service';
 
@@ -48,15 +48,23 @@ constructor(
     }
   }
 
-  @Post('merklemap')
-  async getMerkleMap(@Body('itemId') itemId: number) {
-      const merkleMap = await this.auctionLogService.getMerkleMapForItem(itemId);
-      const serializedMap = await this.auctionLogService.serializeMerkleMap(merkleMap);
-    
-      console.log(serializedMap.length)
+    @Post('merklemap')
+    async getMerkleMap(@Body('itemId') itemId: number) {
+        const merkleMap = await this.auctionLogService.getMerkleMapForItem(itemId);
+        const serializedMap = await this.auctionLogService.serializeMerkleMap(merkleMap);
+      
+        console.log(serializedMap.length)
 
-      return serializedMap;
-  }
+        return serializedMap;
+    }
+
+    @Post('verify')
+    async verifyBid(@Body() AuctionLogverifyDto: AuctionLogverifyDto) {
+      console.log('auction-log / verify ')
+      return this.auctionLogService.verifyBid(AuctionLogverifyDto);
+    }
+
+  
 
 }
 

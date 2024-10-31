@@ -65,6 +65,7 @@ export class AuctionWinnerService {
   private async storeWinner(auction: Item, highestBid: AuctionLog) {
     const winner = new AuctionWinner();
     winner.auctionItem = auction;
+    winner.winningKey = highestBid.key;
     winner.winningBid = highestBid.bidAmount;
     winner.winnerAddress = highestBid.bidUser;
     winner.winTime = new Date();

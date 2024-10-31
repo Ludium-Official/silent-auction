@@ -308,6 +308,22 @@
     }
   }
   
+  .errorMessage {
+    color: #ff0000;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
+  .loadingMessage {
+    color: #2196f3;
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
   @media (max-width: 768px) {
     .mainContent {
       padding: 1rem;

@@ -11,6 +11,13 @@ export class AuctionLogRepository extends Repository<AuctionLog>{
         return this.findOne({ where: { id } });
     }
 
+    async findByItemIdAndKey(itemId: number, key: number): Promise<AuctionLog | null> {
+        return this.createQueryBuilder('auctionLog')
+            .leftJoinAndSelect('auctionLog.item', 'item')
+            .where('item.id = :itemId', { itemId })
+            .andWhere('auctionLog.key = :key', { key })
+            .getOne();
+    }
     
     
 

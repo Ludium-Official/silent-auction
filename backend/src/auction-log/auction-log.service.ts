@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Field, MerkleMap, MerkleTree} from "o1js";
 import { AuctionLogRepository } from "./auction-log.repostiory";
 import {
@@ -7,6 +7,7 @@ import {
   bigintFromBase64,
   bigintToBase64,
 } from "zkcloudworker"; 
+import { AuctionLogverifyDto } from "./dto/auction-log.dto";
 
 @Injectable()
 export class AuctionLogService {
@@ -66,8 +67,27 @@ export class AuctionLogService {
 
         return JSON.stringify(serialized);
       }
+    
+    async verifyBid(AuctionLogverifyDto: AuctionLogverifyDto) {
+      console.log(AuctionLogverifyDto.itemId)
+      console.log(AuctionLogverifyDto.key)
+
+      const auctionLog = await this.auctionLogRepository.findByItemIdAndKey(AuctionLogverifyDto.itemId, AuctionLogverifyDto.key);
       
+      if (!auctionLog) {
+        throw new NotFoundException('No bid found with the provided key');
+      }
   
+      // Get the highest bid for this item to determine if this is the winning bid
+  
+      return {
+        bidAmount: auctionLog.bidAmount,
+        bidTime: auctionLog.bidTime,
+        transactionHash: auctionLog.transactionHash,
+        bidUser: auctionLog.bidUser,
+      };
+    }
+
   
 
   // Add other methods to interact with the Item contract as needed

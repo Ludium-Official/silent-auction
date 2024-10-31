@@ -136,7 +136,6 @@ export async function transferNFT(params) {
       };
     }
 
-    // ... [previous account checks remain the same]
 
     console.log("Getting NFT owner and name...");
     const nftOwner = nftApp.owner.get();
@@ -177,49 +176,46 @@ export async function transferNFT(params) {
     );
     console.timeEnd("Transaction preparation");
 
-    const serializedTransaction = serializeTransaction(tx);
-    const transaction = tx.toJSON();
-    if (DEBUG) console.log("Transaction", tx.toPretty());
+    await NameContractV2.compile()
+    await NFTContractV2.compile()
+    // Add local proving here
+    console.log("Starting local proof generation...");
+    console.time("proof");
+    await showText("Generating proof locally... This may take a few minutes", "blue");
+    
+    const proof = await tx.prove();
+    console.timeEnd("proof");
+    console.log("Proof generated successfully");
+
+    const serializedTransaction = tx.toJSON();
     const payload = {
-      transaction,
-      onlySign: true,
+      transaction: serializedTransaction,
       feePayer: {
         fee: fee,
         memo: memo,
       },
     };
-    
 
     console.log("Requesting user signature...");
     const txResult = await window.mina?.sendTransaction(payload);
     console.log("Transaction signature result:", txResult);
 
-    if (!txResult?.signedData) {
-      console.error("No signed data received");
-      await showText("No user signature received", "red");
+    if (!txResult?.hash) {
+      console.error("No transaction hash received");
+      await showText("No transaction hash received", "red");
       await showPending(undefined);
       return {
         success: false,
-        error: "No user signature",
+        error: "No transaction hash",
       };
     }
-
-    console.log("Sending transaction to cloud proving service...");
-    const jobId = await sendTransferTransaction({
-      name,
-      serializedTransaction,
-      signedData: txResult.signedData,
-      transferParams: serializeFields(TransferParams.toFields(transferParams)),
-      contractAddress,
-      chain,
-    });
-    console.log("Cloud proving job ID:", jobId);
 
     console.timeEnd("transferNFT");
     return {
       success: true,
-      jobId,
+      transactionHash: txResult.hash,
     };
+
   } catch (error) {
     console.error("Transfer NFT error:", error);
     return {
@@ -241,6 +237,7 @@ async function ensureWalletConnection() {
       // Try to connect if no accounts are found
       await window.mina.requestAccounts();
       const newAccounts = await window.mina.getAccounts();
+      console.log(newAccounts)
       if (!newAccounts || newAccounts.length === 0) {
         throw new Error("No accounts available after connection");
       }
